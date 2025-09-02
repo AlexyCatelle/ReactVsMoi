@@ -13,7 +13,7 @@ function Search({
 		<>
 			<h2>Rechercher un Pokémon</h2>
 
-			<form>
+			<form htmlFor="search-form">
 				{/*Search par nom */}
 				<label htmlFor="searchByName-input"> Par nom : </label>
 				<input
@@ -90,6 +90,7 @@ function App() {
 
 	//----------------------------------------------------------------
 	// Handles -- START
+
 	// Bouton reset
 	const handleClear = () => {
 		setSearchByNameTerm("");
