@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 
 import "./App.css";
 
-function Search({ searchByNameTerm, handleSearchByName }) {
+function Search({
+	searchByNameTerm,
+	handleSearchByName,
+	searchByTypeTerm,
+	handleSearchByType,
+  handleClear
+}) {
 	return (
 		<>
 			<h2>Rechercher un Pokémon</h2>
@@ -15,11 +21,20 @@ function Search({ searchByNameTerm, handleSearchByName }) {
 					type="text"
 					value={searchByNameTerm}
 					onChange={(e) => handleSearchByName(e.target.value)}
-					placeholder="Rechercher un Pokémon"
+					placeholder="Rechercher par nom"
 				/>
 
 				{/* Search par type */}
-        
+				<label htmlFor="searchByType-input"> Par type : </label>
+				<input
+					id="searchByType-input"
+					type="text"
+					value={searchByTypeTerm}
+					onChange={(e) => handleSearchByType(e.target.value)}
+					placeholder="Rechercher par type"
+				/>
+
+        <button type="button" onClick={handleClear}>Reset</button>
 			</form>
 		</>
 	);
@@ -30,21 +45,22 @@ function List({ pokemons }) {
 		return <p>Aucun Pokémon trouvé</p>;
 	}
 	return (
-		<ul>
-			{pokemons.map((pokemon, index) => (
-				<li key={index}>
-					{pokemon.name} - {pokemon.type}
-				</li>
-			))}
-		</ul>
+		<main>
+			<ul>
+				{pokemons.map((pokemon, index) => (
+					<li key={index}>
+						{pokemon.name} - {pokemon.type}
+					</li>
+				))}
+			</ul>
+		</main>
 	);
 }
 
 function App() {
 	const [pokemons, setPokemons] = useState([]);
-	const [searchByNameTerm, setSearchByNameTerm] = useState(
-		() => localStorage.getItem("searchByNameTerm") || "Forgelina"
-	);
+	//----------------------------------------------------------------
+	// Fake data -- START
 
 	const pokemonsData = [
 		{ name: "Pikachu", type: "Électrik" },
@@ -55,20 +71,54 @@ function App() {
 		{ name: "Lixy", type: "Électrik" },
 	];
 
+	// Fake data -- END
+	//----------------------------------------------------------------
+
+	//----------------------------------------------------------------
+	// State pour les filtres -- START
+
+	// Search par nom
+	const [searchByNameTerm, setSearchByNameTerm] = useState(
+		() => localStorage.getItem("searchByNameTerm") || "Forgelina"
+	);
+
+	// Search par type
+	const [searchByTypeTerm, setSearchByTypeTerm] = useState("");
+
+	// State pour les filtres -- END
+	//----------------------------------------------------------------
+
+	//----------------------------------------------------------------
+	// Handles -- START
+	// Bouton reset
+	const handleClear = () => {
+		setSearchByNameTerm("");
+    setSearchByTypeTerm("");
+	};
+	// Handles -- END
+	//----------------------------------------------------------------
+
 	useEffect(() => {
 		setPokemons(pokemonsData);
 		localStorage.setItem("searchByNameTerm", searchByNameTerm);
 	}, [searchByNameTerm, pokemonsData]);
 
-	const filtered = pokemons.filter((p) =>
-		p.name.toLowerCase().includes(searchByNameTerm.toLowerCase())
+	const filtered = pokemons.filter(
+		(p) =>
+			p.name.toLowerCase().includes(searchByNameTerm.toLowerCase()) &&
+			p.type.toLowerCase().includes(searchByTypeTerm.toLowerCase())
 	);
 
 	return (
 		<>
+			<h1>React - TP 1</h1>
+
 			<Search
 				searchByNameTerm={searchByNameTerm}
 				handleSearchByName={setSearchByNameTerm}
+				searchByTypeTerm={searchByTypeTerm}
+				handleSearchByType={setSearchByTypeTerm}
+        handleClear={handleClear}
 			/>
 			<List pokemons={filtered} />
 		</>
