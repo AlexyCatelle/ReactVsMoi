@@ -6,9 +6,7 @@ export const PostCard = ({post}) => {
     <article className="post-card">
       <h3>{post.title}</h3>
       <p>{post.body.substring(0, 100)}...</p>
-      <small>post ID: {post.id}</small>
-      <br />
-      <Link to={`/post/${post.id}`}>Voir le post →</Link>
+      <Link to={`/post/${post.id}`}>Voir l'article</Link>
     </article>
   )
 };
