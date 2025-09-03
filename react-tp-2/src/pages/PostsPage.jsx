@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { PostCard } from '../components/PostCard.jsx';
 
 export const PostsPage = ({ posts }) => {
   return (
@@ -10,13 +10,7 @@ export const PostsPage = ({ posts }) => {
         <div>
           <p>{posts.length} posts récupérés</p>
           {posts.slice(0, 3).map((post) => (
-            <div key={post.id}>
-              <h4>{post.title}</h4>
-              <p>{post.body.substring(0, 100)}...</p>
-              <small>post ID: {post.id}</small>
-              <br />
-              <Link to={`/post/${post.id}`}>Voir le post →</Link>
-            </div>
+            <PostCard key={post.id} post={post} />
           ))}
         </div>
       ) : (
