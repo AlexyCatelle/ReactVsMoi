@@ -10,14 +10,14 @@ export const Navigation = () => {
   return (
     <>
 <header>
-  <h1>React Router</h1>
+  <h1>React Router (Y2K's version)</h1>
   <nav>
     <NavLink  to="/" style={style} >Home</NavLink> {" | "}
     <NavLink to="/create" style={style}  >Créer un article</NavLink>
   </nav>
   </header>
 
-  <main style={{border: "1px solid black", padding: "5rem 0", textAlign:"center"}}>
+  <main>
     <Outlet />
   </main>
   <Footer/>
