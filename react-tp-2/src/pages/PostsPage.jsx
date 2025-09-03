@@ -3,7 +3,7 @@ import { PostCard } from '../components/PostCard.jsx';
 
 export const PostsPage = ({ posts }) => {
   return (
-    <div>
+    <section>
       <h2>Posts Page</h2>
       {/* Affichage des posts */}
       {posts.length > 0 ? (
@@ -16,6 +16,6 @@ export const PostsPage = ({ posts }) => {
       ) : (
         <p>Chargement des posts...</p>
       )}
-    </div>
+    </section>
   );
 };

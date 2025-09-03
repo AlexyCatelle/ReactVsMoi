@@ -37,11 +37,11 @@ export function CreatePostPage() {
   };
 
   return (
-    <div>
-      <h2>Create Post Page</h2>
+    <>
+      <h2>Creer un article</h2>
       {/* Formulaire de création de post */}
       <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '1rem' }}>
+        <fieldset style={{border:"none"}}>
           <label htmlFor="title">Titre:</label>
           <input
             type="text"
@@ -49,17 +49,11 @@ export function CreatePostPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Entrez le titre du post"
-            style={{ 
-              width: '100%', 
-              padding: '0.5rem', 
-              marginTop: '0.25rem',
-              display: 'block'
-            }}
             disabled={loading}
           />
-        </div>
-        
-        <div style={{ marginBottom: '1rem' }}>
+        </fieldset>
+
+        <fieldset style={{border:"none"}}>
           <label htmlFor="body">Contenu:</label>
           <textarea
             id="body"
@@ -67,32 +61,16 @@ export function CreatePostPage() {
             onChange={(e) => setBody(e.target.value)}
             placeholder="Entrez le contenu du post"
             rows={6}
-            style={{ 
-              width: '100%', 
-              padding: '0.5rem', 
-              marginTop: '0.25rem',
-              display: 'block',
-              resize: 'vertical'
-            }}
             disabled={loading}
           />
-        </div>
-        
+        </fieldset>
         <button 
           type="submit" 
           disabled={loading}
-          style={{
-            padding: '0.75rem 1.5rem',
-            backgroundColor: loading ? '#ccc' : '#007bff',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: loading ? 'not-allowed' : 'pointer'
-          }}
         >
           {loading ? 'Création en cours...' : 'Créer le post'}
         </button>
       </form>
-    </div>
+    </>
   );
 }

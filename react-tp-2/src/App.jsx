@@ -50,7 +50,6 @@ function App() {
           <Route path="/post/:id" element={<PostDetailPage />} />        
   </Route>
 </Routes>
-
 </>  );
 }
 
