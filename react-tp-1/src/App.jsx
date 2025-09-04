@@ -1,111 +1,13 @@
-import { useEffect, useState, useCallback } from "react";
-import { api } from "./services/pokemonApi";
+import { useEffect, useState } from "react";
 import "./App.css";
 import { HomePage } from "./pages/HomePage";
+import { PokemonProvider, usePokemons } from "./context/PokemonContext.jsx";
 
-// -----------------------------
-// Normalisation des données
-// -----------------------------
-function normalizePokemon(p) {
-  return {
-    id: p.pokedex_id,
-    name: typeof p.name === "object" ? p.name.fr : p.name,
-    types: Array.isArray(p.types) ? p.types.map((t) => t.name) : [p.type],
-    sprite: p.sprites?.regular || null,
-  };
-}
-
-// -----------------------------
-// Composant Search
-// -----------------------------
-function Search({
-  searchByNameTerm,
-  handleSearchByName,
-  searchByTypeTerm,
-  handleSearchByType,
-  handleClear,
-}) {
-  return (
-    <>
-      <h2>Rechercher un Pokémon</h2>
-
-      <form id="search-form">
-        {/* Search par nom */}
-        <label htmlFor="searchByName-input"> Par nom : </label>
-        <input
-          id="searchByName-input"
-          type="text"
-          value={searchByNameTerm}
-          onChange={(e) => handleSearchByName(e.target.value)}
-          placeholder="Rechercher par nom"
-        />
-
-        {/* Search par type */}
-        <label htmlFor="searchByType-input"> Par type : </label>
-        <input
-          id="searchByType-input"
-          type="text"
-          value={searchByTypeTerm}
-          onChange={(e) => handleSearchByType(e.target.value)}
-          placeholder="Rechercher par type"
-        />
-
-        <button type="button" onClick={handleClear}>
-          Reset
-        </button>
-      </form>
-    </>
-  );
-}
-
-// -----------------------------
-// Composant App
-// -----------------------------
-function App() {
-  const [pokemons, setPokemons] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [retryCount, setRetryCount] = useState(0);
-
-  // -----------------------------
-  // Fetch Pokémons
-  // -----------------------------
-  const fetchPokemons = useCallback(
-    async (isRetry = false) => {
-      try {
-        setLoading(true);
-        setError(null);
-
-        if (isRetry) {
-          setRetryCount((prev) => prev + 1);
-          console.log(`Tentative ${retryCount + 1}...`);
-        }
-
-        const response = await api.get("gen/1");
-
-        // Normalisation ici 👇
-        const normalized = response.data.map(normalizePokemon);
-        setPokemons(normalized);
-
-        console.log("Données normalisées :", normalized[0]);
-
-        setRetryCount(0);
-      } catch (err) {
-        console.error("Erreur:", err);
-        setError({
-          message: "Impossible de charger les Pokémon",
-          details: err.message,
-        });
-      } finally {
-        setLoading(false);
-      }
-    },
-    [retryCount]
-  );
-
-  // -----------------------------
-  // States pour les filtres
-  // -----------------------------
+// Composant interne qui utilise le context
+function AppContent() {
+  const { pokemons, loading, error, fetchPokemons } = usePokemons();
+  
+  // États pour les filtres
   const [searchByNameTerm, setSearchByNameTerm] = useState(
     () => localStorage.getItem("searchByNameTerm") || ""
   );
@@ -117,17 +19,12 @@ function App() {
     setSearchByTypeTerm("");
   };
 
-  // -----------------------------
-  // useEffect
-  // -----------------------------
+  // Sauvegarder dans localStorage
   useEffect(() => {
-    fetchPokemons();
     localStorage.setItem("searchByNameTerm", searchByNameTerm);
-  }, [searchByNameTerm, fetchPokemons]);
+  }, [searchByNameTerm]);
 
-  // -----------------------------
   // Filtre
-  // -----------------------------
   const filtered = pokemons.filter(
     (p) =>
       p.name.toLowerCase().includes(searchByNameTerm.toLowerCase()) &&
@@ -136,25 +33,48 @@ function App() {
       )
   );
 
-  // -----------------------------
-  // Render
-  // -----------------------------
   return (
     <>
-      <h1>React - TP 1</h1>
+      <h1>React - TP 3</h1>
+      
+      {error && (
+        <div style={{ color: "red", padding: "10px", border: "1px solid red" }}>
+          <p>❌ {error.message}</p>
+          <p>Détails: {error.details}</p>
+          <button onClick={() => fetchPokemons(true)}>Réessayer</button>
+        </div>
+      )}
+      
+      {loading && <p>Chargement des Pokémon...</p>}
 
-      {error && <p style={{ color: "red" }}>{error.message}</p>}
-      {loading && <p>Chargement...</p>}
+      {/* Composant de recherche (à créer) */}
+      <div>
+        <h2>Rechercher un Pokémon</h2>
+        <input
+          type="text"
+          value={searchByNameTerm}
+          onChange={(e) => setSearchByNameTerm(e.target.value)}
+          placeholder="Rechercher par nom"
+        />
+        <input
+          type="text"
+          value={searchByTypeTerm}
+          onChange={(e) => setSearchByTypeTerm(e.target.value)}
+          placeholder="Rechercher par type"
+        />
+        <button onClick={handleClear}>Reset</button>
+      </div>
 
-      <Search
-        searchByNameTerm={searchByNameTerm}
-        handleSearchByName={setSearchByNameTerm}
-        searchByTypeTerm={searchByTypeTerm}
-        handleSearchByType={setSearchByTypeTerm}
-        handleClear={handleClear}
-      />
       <HomePage pokemons={filtered} />
     </>
+  );
+}
+
+function App() {
+  return (
+    <PokemonProvider>
+      <AppContent />
+    </PokemonProvider>
   );
 }
 

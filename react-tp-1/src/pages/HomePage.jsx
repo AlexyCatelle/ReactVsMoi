@@ -4,6 +4,7 @@ export function HomePage({pokemons}) {
   }
   return (
     <main>
+      <h2>Liste des Pokémon</h2>
       <ul>
         {pokemons.map((pokemon) => (
           <li key={pokemon.id}>
