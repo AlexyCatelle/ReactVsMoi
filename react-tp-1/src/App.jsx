@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { api } from "./services/pokemonApi";
 import "./App.css";
+import { HomePage } from "./pages/HomePage";
 
 // -----------------------------
 // Normalisation des données
@@ -54,29 +55,6 @@ function Search({
         </button>
       </form>
     </>
-  );
-}
-
-// -----------------------------
-// Composant List
-// -----------------------------
-function List({ pokemons }) {
-  if (pokemons.length === 0) {
-    return <p>Aucun Pokémon trouvé</p>;
-  }
-  return (
-    <main>
-      <ul>
-        {pokemons.map((pokemon) => (
-          <li key={pokemon.id}>
-            {pokemon.sprite && (
-              <img src={pokemon.sprite} alt={pokemon.name} width={50} />
-            )}
-            {pokemon.name} - {pokemon.types.join(", ")}
-          </li>
-        ))}
-      </ul>
-    </main>
   );
 }
 
@@ -175,7 +153,7 @@ function App() {
         handleSearchByType={setSearchByTypeTerm}
         handleClear={handleClear}
       />
-      <List pokemons={filtered} />
+      <HomePage pokemons={filtered} />
     </>
   );
 }
