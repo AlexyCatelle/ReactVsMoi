@@ -72,6 +72,7 @@ function App() {
 	const [inputValue, setInputValue] = useState<string>("");
 	const [filter, setFilter] = useState<Filter>("Toutes");
 
+	// Ajout de tâche -- START
 	const addTask = (): void => {
 		if (inputValue.trim()) {
 			dispatch({ type: "ADD_TASK", payload: inputValue.trim() });
@@ -87,14 +88,15 @@ function App() {
 		dispatch({ type: "DELETE_TASK", payload: id });
 	};
 
-	// Gestion de l'ajout par Enter
 	const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
 		if (e.key === "Enter") {
 			addTask();
 		}
 	};
 
-	// Filtrage des tâches
+	// Ajout de tâche -- END
+
+	// Filtres -- START
 	const filteredTasks: Task[] = state.tasks.filter((task) => {
 		switch (filter) {
 			case "Terminées":
@@ -106,6 +108,16 @@ function App() {
 		}
 	});
 
+	// Filtres -- END
+
+	// Compteur -- START
+	const totalTasks: number = state.tasks.length;
+	const completedTasks: number = state.tasks.filter(
+		(task) => task.completed
+	).length;
+	const pendingTasks: number = totalTasks - completedTasks;
+
+	// Compteur -- END
 	return (
 		<>
 			<header>
@@ -144,31 +156,41 @@ function App() {
 						En cours
 					</button>
 				</section>
+
+				<section className="task-count">
+					<p>
+						Total: {totalTasks} | Terminées: {completedTasks} | En cours:{" "}
+						{pendingTasks}
+					</p>
+				</section>
+
 				<section className="task-list">
 					{filteredTasks.length === 0 ? (
 						<p>
-							{filter === 'Toutes' ? 'Aucune tâche' : 
-							 filter === 'En cours' ? 'Aucune tâche en cours' : 
-							 'Aucune tâche terminée'}
+							{filter === "Toutes"
+								? "Aucune tâche"
+								: filter === "En cours"
+									? "Aucune tâche en cours"
+									: "Aucune tâche terminée"}
 						</p>
 					) : (
 						<ul>
-							{filteredTasks.map(task => (
+							{filteredTasks.map((task) => (
 								<li key={task.id}>
 									<input
 										type="checkbox"
 										checked={task.completed}
 										onChange={() => toggleTask(task.id)}
 									/>
-									<span style={{ 
-										textDecoration: task.completed ? 'line-through' : 'none',
-										color: task.completed ? '#666' : '#000'
-									}}>
+									<span
+										style={{
+											textDecoration: task.completed ? "line-through" : "none",
+											color: task.completed ? "#666" : "#000",
+										}}
+									>
 										{task.text}
 									</span>
-									<button onClick={() => deleteTask(task.id)}>
-										Supprimer
-									</button>
+									<button onClick={() => deleteTask(task.id)}>Supprimer</button>
 								</li>
 							))}
 						</ul>
